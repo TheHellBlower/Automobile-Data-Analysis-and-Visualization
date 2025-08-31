@@ -1,0 +1,139 @@
+---
+title: "Shiny App Report: Analyzing Expensive Cars On Various Aspects"
+format: html
+editor: visual
+---
+
+### Department of Mathematics & Statistics, IIT Kanpur
+
+## MTH 208 Project Report (Group - 18) {.underline}
+
+#### Submitted To-
+
+#### Dr. Dootika Vats
+
+#### [Submitted by-]{.underline}
+
+-   \centering Bishal Paul
+
+-   \centering Jyotishka Patra
+
+-   \centering Khushi Ranawat
+
+-   \centering Ashish Kumar Soni
+
+\pagebreak
+
+#  {#sec-introduction}
+
+# Introduction {.underline}
+
+This report presents an analysis of expensive cars using a Shiny app developed in R. The app allows users to explore a dataset of high-end cars, visualize key features, and view related images. The data was scraped from the website [`fastestlaps.com`](https://fastestlaps.com), focusing on some of the most luxurious and high-performance cars available.
+
+## Data Collection And Preprocessing {.underline}
+
+### Data Sources
+
+The dataset was collected using web scraping techniques from `fastestlaps.com`. The data includes various car attributes such as names, links, and images. Below is a preview of the data collection process:
+
+``` r
+```
+
+```{r}
+# Load necessary libraries
+library(rvest)
+library(tidyverse)
+
+# Example of web scraping code
+html <- read_html("https://fastestlaps.com/lists/top-most-expensive-cars")
+car_names <- html %>% html_elements(".table.table-striped a") %>% html_text()
+car_links <- html %>% html_elements(".table.table-striped a") %>% html_attr("href")
+
+# Display the first few car names and links
+head(car_names)
+head(car_links)
+
+```
+
+### Data Cleaning
+
+The scraped data was cleaned and transformed using the `dplyr` and `tidyr` packages:
+
+```{r}
+# Example data cleaning steps
+car_data <- tibble(name = car_names, link = car_links) %>%
+  filter(!is.na(name)) %>%
+  mutate(name = str_trim(name))
+
+# Preview the cleaned dataset
+head(car_data)
+
+```
+
+### Identifying Potential Biases
+
+#### 1.Source Bias
+
+-   **Description**: Since data is collected from only one website, it is probable that such data will carry the preferences, focus, or even biases of the respective website. For instance, let our data have been web-scraped out from a website called `fastestlaps.com`, which focuses strictly on car performance metrics, speed, and acceleration. Then the consequent dataset will proportionally comprise sports cars or hypercars. This means that such stereotyping will lead to under-representation of the other car type varieties that believe in other features but not speed, such as luxury cars that believe in comfort, effectiveness, safety, and prestige.
+
+-   **Impact**: This could lead to over-representation of specific types of cars (e.g., sports cars or hypercars) and under-representation of other categories (e.g., luxury sedans, electric cars).
+
+#### 2.Selection Bias
+
+-   **Description**: The dataset only include the most popular or highly-rated cars on that platform, so some lesser-known brands or older models will not be represented. It might lead to selective bias, hence skewing the analysis to only top-performing or well-marketed vehicles.
+
+-   **Impact**: The conclusions drawn from this data may not apply universally to luxury car markets, particularly when specific target brands or models focus more on other aspects than top speed or high performance.
+
+#### 3.Attribute Bias
+
+-   **Description**: This can give the dataset a weight on specific features of the car, such as maximum speed or acceleration, at the expense of other features, like fuel efficiency and safety. Consequently, there is then introduced bias in favor of cars that score high on the metrics being highlighted.
+
+-   **Impact**: Analyses might show a higher correlation between attributes like speed and price, potentially overlooking other important factors such as sustainability or comfort.
+
+**Potential Questions That Arises From The Data**
+
+1.  Does the price of a car depends on its performance metrics like top speed , acceleration?
+2.  Are there any noticeable trends among the most expensive cars regarding their speed and engine power?
+3.  What models of the cars did we find most frequently among the top expensive models and did a particular brand name dominate in this category?
+4.  Are there certain countries that produce a higher number of luxury cars? How does the country of origin affect the pricing of luxury cars?
+5.  Does the high-speed of these expensive cars come at a price of greater fuel efficiency? And if it is true does the newer models show some improvements over the old ones?
+
+## Important Visualizations
+
+There are various plots in our Shiny-App which can provide us with various insights regarding the features associated with cars. The plot below indicates that SUV's have lower Top speed compared to convertibles which implies that they are better known for their safety features rather than speed making them an ideal family vehicle.
+
+```{r, echo=FALSE,warning=FALSE}
+library(ggplot2)
+load("../Data/Cars_Data.RData")
+ggplot(data, aes(x = top_speed, fill = car_type)) +
+  geom_density(alpha = 0.5) +
+  labs(
+    title = "Density of Top speed by Car-type",
+    x = "Top Speed",
+    y = "Car-type"
+  ) +
+  theme_minimal()
+```
+
+From the graph below, we can infer that acceleration is more dependent on the weight of the car rather than its price.
+
+```{r,warning=FALSE,echo=FALSE}
+ggplot(data, aes(x = price_asnum, y = max_acc , colour = weight
+                 )) +
+  geom_point() +
+  labs(title = "Price vs Acceleration",
+       x = "Price",
+       y = "Acceleration")
+```
+
+## Final Conclusions
+
+The Shiny app really does achieve the purpose of making for an interesting interface into which one can input analysis about luxury cars. Ironically, if top speed plotted against price shows any trends, it seems that luxury cars are pricier as long as top speeds are concerned. In fact, this project implies that R and Shiny can provide interaction in web-based applications with data analysis. It is essentially a combination of a data visualization capability and user-interaction capability. More advanced features in data and features would help in making the application even more robust and flexible towards its next moves. \###
+
+### References
+
+www.fastestlaps.com
+
+www.Google.com
+
+www.wikipedia.in
